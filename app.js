@@ -10,7 +10,6 @@ const cardsRoute = require("./routes/cards");
 //  задаём порт
 const { PORT = 3000 } = process.env;
 
-
 // подключаение к серверу mongo
 mongoose.connect("mongodb://localhost:27017/mestodb", {
   useNewUrlParser: true,
