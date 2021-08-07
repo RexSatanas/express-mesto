@@ -1,9 +1,12 @@
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 const ErrorCodes = {
   NOT_FOUND: 404,
   BAD_REQUEST: 400,
   DEFAULT: 500,
+  UNAUTHORIZED: 401,
 };
 console.log("USER =", User);
 
@@ -36,8 +39,18 @@ const getUser = (req, res) => {
 
 // создание нового пользователя
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -92,4 +105,27 @@ const updateAvatar = (req, res) => {
     });
 };
 
-module.exports = { getAllUsers, getUser, createUser, updateUserInfo, updateAvatar };
+const Login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        "some-secret-key",
+        { expiresIn: "7d" },
+      );
+      res.send({ token });
+    })
+    .catch((err) => {
+      if (err.message === "NotFound") {
+        res.status(ErrorCodes.UNAUTHORIZED).send({ message: "Неверно указаны данные для входа" });
+        return;
+      }
+      res.status(ErrorCodes.DEFAULT).send({ message: "На сервере произошла ошибка" });
+    });
+};
+
+module.exports = {
+  getAllUsers, getUser, createUser, updateUserInfo, updateAvatar, Login,
+};
