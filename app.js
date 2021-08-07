@@ -1,13 +1,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const auth = require("./middlewares/auth");
+const { login } = require("./controllers/users");
+const { createUser } = require("./controllers/users");
+const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 
 // роуты
 const usersRoute = require("./routes/users");
 const cardsRoute = require("./routes/cards");
-const { login } = require("./controllers/users");
-const { createUser } = require("./controllers/users");
 //  задаём порт
 const { PORT = 3000 } = process.env;
 
@@ -21,20 +23,13 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "60fe9612049b911732dc6d0f",
-  };
-
-  next();
-});
-
 app.post("/signup", createUser);
 app.post("/signin", login);
 
-app.use("/", usersRoute);
-app.use("/", cardsRoute);
-
+app.use(auth);
+app.use("/", auth, usersRoute);
+app.use("/", auth, cardsRoute);
+app.use(errorHandler)
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });

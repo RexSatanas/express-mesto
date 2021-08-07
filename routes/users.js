@@ -13,6 +13,8 @@ POST /users — создаёт пользователя */
 
 router.get("/users", getAllUsers);
 
+router.get("/users/me", getUser);
+
 router.get("/users/:userId", getUser);
 
 router.patch("/users/me", updateUserInfo);

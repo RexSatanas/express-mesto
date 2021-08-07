@@ -105,25 +105,35 @@ const updateAvatar = (req, res) => {
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findUserByCredentials(email, password)
+  User.findOne({ email }).select("+password")
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        "some-secret-key",
-        { expiresIn: "7d" },
-      );
-      res.send({ token });
-    })
-    .catch((err) => {
-      if (err.message === "NotFound") {
-        res.status(ErrorCodes.UNAUTHORIZED).send({ message: "Неверно указаны данные для входа" });
-        return;
+      if (!user) {
+        throw new NotFoundUserError("Неправильные почта или пароль");
       }
-      res.status(ErrorCodes.DEFAULT).send({ message: "На сервере произошла ошибка" });
-    });
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw new NotFoundUserError("Неправильные почта или пароль");
+          }
+          const token = jwt.sign(
+            { _id: user._id },
+            "very-secret-key",
+            { expiresIn: "7d" },
+          );
+
+          res.cookie("jwt", token, {
+            maxAge: 3600000 * 24 * 7,
+            httpOnly: true,
+          })
+            .status(201).send({
+            message: "Аутентификация прошла успешно",
+          });
+        });
+    })
+    .catch(next);
 };
 
 module.exports = {
