@@ -105,7 +105,7 @@ const updateAvatar = (req, res) => {
     });
 };
 
-const Login = (req, res) => {
+const login = (req, res) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -127,5 +127,5 @@ const Login = (req, res) => {
 };
 
 module.exports = {
-  getAllUsers, getUser, createUser, updateUserInfo, updateAvatar, Login,
+  getAllUsers, getUser, createUser, updateUserInfo, updateAvatar, login,
 };

@@ -6,7 +6,8 @@ const app = express();
 // роуты
 const usersRoute = require("./routes/users");
 const cardsRoute = require("./routes/cards");
-
+const { login } = require("./controllers/users");
+const { createUser } = require("./controllers/users");
 //  задаём порт
 const { PORT = 3000 } = process.env;
 
@@ -27,6 +28,9 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.post("/signup", createUser);
+app.post("/signin", login);
 
 app.use("/", usersRoute);
 app.use("/", cardsRoute);
