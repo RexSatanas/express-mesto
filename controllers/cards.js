@@ -29,20 +29,6 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === "CastError") {
-        next(new Error400("Ошибка в запросе"));
-      } else if (err.message === "NotFound") {
-        next(new Error404("Карточка с указанным _id не найдена"));
-      } else {
-        next(new Error500("На сервере произошла ошибка :("));
-      }
-    });
-};
-
-const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail(() => {
       throw new Error404("Карточка с указанным _id не найдена");
