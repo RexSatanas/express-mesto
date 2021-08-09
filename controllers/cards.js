@@ -10,7 +10,7 @@ const getAllCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
     .catch(() => {
-      next(new Error500("На сервере произошла ошибка :("));
+      next(new Error500("На сервере произошла ошибка"));
     });
 };
 
@@ -23,7 +23,7 @@ const createCard = (req, res, next) => {
       if (err.name === "ValidationError") {
         next(new Error400("Переданы некорректные данные при создании карточки"));
       } else {
-        next(new Error500("На сервере произошла ошибка :("));
+        next(new Error500("На сервере произошла ошибка"));
       }
     });
 };
@@ -47,7 +47,7 @@ const deleteCard = (req, res, next) => {
       } else if (err.message === "NotFound") {
         next(new Error404("Карточка с указанным _id не найдена"));
       } else {
-        next(new Error500("На сервере произошла ошибка :("));
+        next(new Error500("На сервере произошла ошибка"));
       }
     });
 };
@@ -63,7 +63,7 @@ const likeCard = (req, res, next) => {
       } else if (err.message === "NotFound") {
         next(new Error404("Карточка с указанным _id не найдена"));
       } else {
-        next(new Error500("На сервере произошла ошибка :("));
+        next(new Error500("На сервере произошла ошибка"));
       }
     });
 };
@@ -81,7 +81,7 @@ const dislikeCard = (req, res, next) => {
       } else if (err.message === "NotFound") {
         next(new Error404("Карточка с указанным _id не найдена"));
       } else {
-        next(new Error500("На сервере произошла ошибка :("));
+        next(new Error500("На сервере произошла ошибка"));
       }
     });
 };
