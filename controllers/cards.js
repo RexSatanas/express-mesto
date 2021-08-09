@@ -89,4 +89,3 @@ const dislikeCard = (req, res, next) => {
 module.exports = {
   getAllCards, createCard, deleteCard, likeCard, dislikeCard,
 };
-
