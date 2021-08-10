@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt"); // импортируем bcrypt
 const jwt = require("jsonwebtoken"); // импортируем модуль jsonwebtoken
 const User = require("../models/user");
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const Error401 = require("../errors/Error401");
 const Error500 = require("../errors/Error500");
 
@@ -20,11 +22,11 @@ const checkLogin = (req, res, next) => {
             const error = new Error401("Введён неправильный пароль");
             throw error;
           }
-          const token = jwt.sign({ _id: user._id }, "strongest-key-ever", { expiresIn: "7d" });
+          const token = jwt.sign({ _id: user._id }, NODE_ENV === "production" ? JWT_SECRET : "strongest-key-ever", { expiresIn: "7d" });
           res.send({ token });
         })
         .catch((err) => {
-          if (err.message === "UNAUTHORIZED") {
+          if (err.statusCode === 401) {
             next(new Error401("Неавторизирован"));
           } else {
             next(new Error500("На сервере произошла ошибка"));
@@ -32,7 +34,7 @@ const checkLogin = (req, res, next) => {
         });
     })
     .catch((err) => {
-      if (err.message === "UNAUTHORIZED") {
+      if (err.statusCode === 401) {
         next(new Error401("Неавторизирован"));
       } else {
         next(new Error500("На сервере произошла ошибка"));

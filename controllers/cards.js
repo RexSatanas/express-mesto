@@ -4,8 +4,6 @@ const Error404 = require("../errors/Error404");
 const Error403 = require("../errors/Error403");
 const Error500 = require("../errors/Error500");
 
-console.log("CARD =", Card);
-
 const getAllCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
@@ -56,6 +54,9 @@ const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true })
+    .orFail(() => {
+      throw new Error404("Карточка с указанным _id не найдена");
+    })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === "CastError") {
@@ -74,6 +75,9 @@ const dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(() => {
+      throw new Error404("Карточка с указанным _id не найдена");
+    })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === "CastError") {
