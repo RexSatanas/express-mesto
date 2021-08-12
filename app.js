@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const { errors, celebrate, Joi } = require("celebrate");
+const Error404 = require("./errors/Error404");
 
 const app = express();
 
@@ -13,7 +14,6 @@ const login = require("./controllers/login");
 const auth = require("./middlewares/auth");
 //  задаём порт
 const { PORT = 3000 } = process.env;
-const NOT_FOUND = 404;
 // подключаение к серверу mongo
 mongoose.connect("mongodb://localhost:27017/mestodb", {
   useNewUrlParser: true,
@@ -45,9 +45,10 @@ app.post("/signup", celebrate({
 app.use(auth);
 app.use("/", auth, usersRoute);
 app.use("/", auth, cardsRoute);
-app.use("*", (req, res) => {
-  res.status(NOT_FOUND).send({ message: `Страницы по адресу ${req.baseUrl} не существует` });
-});
-app.use(errorHandler);
+
+app.all("*", (req, res, next) => next(new Error404("Ресурс не найден.")));
+
 app.use(errors());
+
+app.use(errorHandler);
 app.listen(PORT);

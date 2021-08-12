@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
     next(new Error401("Необходима авторизация"));
   }
 
-  const token = authorization.replace("Bearer ", " ");
+  const token = authorization.replace("Bearer ", "");
   let payload;
 
   try {
