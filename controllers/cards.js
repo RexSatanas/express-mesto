@@ -42,7 +42,7 @@ const deleteCard = (req, res, next) => {
     .catch((err) => {
       if (err.message === "CastError") {
         next(new Error400("Ошибка в запросе"));
-      } else if (err.message === "NotFound") {
+      } else if (err.statusCode === 404) {
         next(new Error404("Карточка с указанным _id не найдена"));
       } else {
         next(new Error500("На сервере произошла ошибка"));
@@ -61,7 +61,7 @@ const likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         next(new Error400("Ошибка в запросе"));
-      } else if (err.message === "NotFound") {
+      } else if (err.statusCode === 404) {
         next(new Error404("Карточка с указанным _id не найдена"));
       } else {
         next(new Error500("На сервере произошла ошибка"));
@@ -82,7 +82,7 @@ const dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         next(new Error400("Ошибка в запросе"));
-      } else if (err.message === "NotFound") {
+      } else if (err.statusCode === 404) {
         next(new Error404("Карточка с указанным _id не найдена"));
       } else {
         next(new Error500("На сервере произошла ошибка"));

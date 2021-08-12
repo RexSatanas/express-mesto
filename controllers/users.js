@@ -26,7 +26,7 @@ const getUser = (req, res, next) => {
     .catch((err) => {
       if (err.message === "CastError") {
         next(new Error400("Ошибка в формате ID пользователя"));
-      } else if (err.message === "NotFound") {
+      } else if (err.statusCode === 404) {
         next(new Error404("Пользователь с указанным _id не найден"));
       } else {
         next(new Error500("На сервере произошла ошибка"));
@@ -46,7 +46,7 @@ const getCurrentUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         next(new Error400("Ошибка в формате ID пользователя"));
-      } else if (err.statusCode === "NotFound") {
+      } else if (err.statusCode === 404) {
         next(new Error404("Пользователь с указанным _id не найден"));
       } else {
         next(new Error500("На сервере произошла ошибка"));
@@ -101,7 +101,7 @@ const updateUserInfo = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         next(new Error400("Ошибка в формате ID пользователя"));
-      } else if (err.statusCode === "NotFound") {
+      } else if (err.statusCode === 404) {
         next(new Error404("Пользователь с указанным _id не найден"));
       } else {
         next(new Error500("На сервере произошла ошибка"));
@@ -124,7 +124,7 @@ const updateAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         next(new Error400("Ошибка в формате ID пользователя"));
-      } else if (err.statusCode === "NotFound") {
+      } else if (err.statusCode === 404) {
         next(new Error404("Пользователь с указанным _id не найден"));
       } else {
         next(new Error500("На сервере произошла ошибка"));
