@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const { errors, celebrate, Joi } = require("celebrate");
 const Error404 = require("./errors/Error404");
+const { requestLogger, errorLogger } = require("./middlewares/loggers");
 
 const app = express();
 
@@ -21,6 +22,8 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
   useFindAndModify: false,
   useUnifiedTopology: true,
 });
+
+app.use(requestLogger);
 
 app.use(express.json());
 
@@ -47,7 +50,7 @@ app.use("/", auth, usersRoute);
 app.use("/", auth, cardsRoute);
 
 app.all("*", (req, res, next) => next(new Error404("Ресурс не найден.")));
-
+app.use(errorLogger);
 app.use(errors());
 
 app.use(errorHandler);
